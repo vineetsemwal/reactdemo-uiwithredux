@@ -1,18 +1,15 @@
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import SimpleReactValidator from "simple-react-validator";
 import { addProduct } from "../../../redux/products/add-product/addProductActions";
-import store from "../../../redux/products/fetch-products/store";
 
 function AddProduct() {
 
-    const [formData, setFormData] = useState({ name: '', price: -1 });
+    const [formData, setFormData] = useState({ name: '', price: '' });
     let validator=new SimpleReactValidator();
-    useEffect(()=>{
-        console.log("inside useeffect");
-    });
+
+    const dispatch=useDispatch();
     
-     
     const response = useSelector(state => {
         return {
             product: state.addProduct.product,
@@ -29,7 +26,12 @@ function AddProduct() {
 
     const submitHandler = event => {
         event.preventDefault();
-        store.dispatch(addProduct(formData));
+        const valid=validator.allValid();
+        if(!valid){
+            return;
+        }
+        console.log("form valid",valid);
+        dispatch(addProduct(formData));
     }
 
     let successUi = '';
@@ -60,7 +62,6 @@ function AddProduct() {
                     <label>Name</label>
                     <input name="name" onChange={changeHandler} className="form-control" 
                     onBlur={validator.showMessageFor('name')} />
-                    validator state {validator.allValid()}
                     {validator.message('name', formData.name, 'required')}
                 </div>
 
@@ -77,7 +78,7 @@ function AddProduct() {
 
                 <h3>Product Added</h3>
 
-                {response.product ? successUi : failUi}
+                {response.error ? failUi : successUi}
             </div>
         </div>
 

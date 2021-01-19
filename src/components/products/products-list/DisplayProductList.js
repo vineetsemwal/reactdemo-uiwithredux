@@ -1,7 +1,6 @@
 import { useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { fetchProductsList } from "../../../redux/products/fetch-products/fetchProductsActions";
-import store from "../../../redux/products/fetch-products/store";
 
 function DisplayProductList() {
     const response = useSelector((state) => {
@@ -14,9 +13,8 @@ function DisplayProductList() {
             }
         );
     });
-    
-    useEffect(()=>store.dispatch(fetchProductsList()) ,[]);
-
+    const dispatch=useDispatch();
+    useEffect(()=>dispatch(fetchProductsList()) ,[]);
 
     if(response.error){
         return (<div>error is {response.error}</div>)
@@ -25,7 +23,7 @@ function DisplayProductList() {
        
         <div>
             <h3>Products List</h3>
-            {  response.products.map((product) => <div key={product.id}> {product.id} {product.name} {product.price} </div>)}
+            { response.products.map((product) => <div key={product.id}> {product.id} {product.name} {product.price} </div>)}
         </div>
     );
 }
